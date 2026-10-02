@@ -1,11 +1,3 @@
-```python
-"""
-Daily Planner Agent - Modern Streamlit UI
-
-Run:
-    streamlit run app.py
-"""
-
 import html
 import json
 import os
@@ -1360,6 +1352,5 @@ if user_text or pending:
     )
 
     st.rerun()
-```
 
 
