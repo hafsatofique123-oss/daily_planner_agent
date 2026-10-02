@@ -21,7 +21,7 @@ import tools
 
 
 # =========================================================
-# APP CONFIG
+# APP CONFIGURATION
 # =========================================================
 
 load_dotenv()
@@ -35,7 +35,7 @@ st.set_page_config(
 
 
 # =========================================================
-# CONSTANTS
+# ICONS
 # =========================================================
 
 ICONS = {
@@ -68,7 +68,7 @@ THEMES = {
         "accent2": "#f58ab7",
         "soft": "#ffe0ec",
         "border": "#f5c5d9",
-        "shadow": "rgba(232, 85, 154, 0.12)",
+        "shadow": "rgba(232, 85, 154, 0.14)",
     },
     "💜 Light Purple": {
         "bg1": "#f8f5ff",
@@ -80,13 +80,13 @@ THEMES = {
         "accent2": "#b18af7",
         "soft": "#e8dcff",
         "border": "#d6c5f7",
-        "shadow": "rgba(139, 92, 246, 0.12)",
+        "shadow": "rgba(139, 92, 246, 0.14)",
     },
 }
 
 
 # =========================================================
-# MODERN UI CSS
+# MODERN CSS
 # =========================================================
 
 CSS = Template(
@@ -99,16 +99,29 @@ CSS = Template(
 
 .stApp {
     background:
-        radial-gradient(circle at 10% 10%, $soft 0%, transparent 28%),
-        radial-gradient(circle at 90% 15%, $soft 0%, transparent 25%),
-        linear-gradient(145deg, $bg1 0%, $bg2 100%);
+        radial-gradient(
+            circle at 10% 10%,
+            $soft 0%,
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 90% 15%,
+            $soft 0%,
+            transparent 25%
+        ),
+        linear-gradient(
+            145deg,
+            $bg1 0%,
+            $bg2 100%
+        );
+
     color: $text;
 }
 
 .main .block-container {
     max-width: 1450px;
-    padding-top: 1.8rem;
-    padding-bottom: 3rem;
+    padding-top: 1.5rem;
+    padding-bottom: 5rem;
 }
 
 .stApp p,
@@ -118,15 +131,9 @@ CSS = Template(
 .stApp h1,
 .stApp h2,
 .stApp h3,
-.stApp h4,
-.stApp div[data-testid="stMarkdownContainer"] {
+.stApp h4 {
     color: $text;
 }
-
-
-/* =====================================================
-   HEADER
-   ===================================================== */
 
 header[data-testid="stHeader"] {
     background: transparent;
@@ -138,9 +145,9 @@ header[data-testid="stHeader"] {
    ===================================================== */
 
 section[data-testid="stSidebar"] {
-    background: rgba(255,255,255,0.88);
+    background: rgba(255, 255, 255, 0.90);
     border-right: 1px solid $border;
-    backdrop-filter: blur(16px);
+    backdrop-filter: blur(18px);
 }
 
 section[data-testid="stSidebar"] * {
@@ -159,38 +166,52 @@ section[data-testid="stSidebar"] .stButton > button {
 .hero-wrapper {
     position: relative;
     overflow: hidden;
+
     background:
         linear-gradient(
             120deg,
             $accent 0%,
             $accent2 100%
         );
+
     border-radius: 26px;
     padding: 30px 34px;
-    margin-bottom: 24px;
-    box-shadow: 0 15px 40px $shadow;
+    margin-bottom: 22px;
+
+    box-shadow:
+        0 15px 40px $shadow;
 }
 
 .hero-wrapper::before {
     content: "";
+
     position: absolute;
-    width: 180px;
-    height: 180px;
+
+    width: 190px;
+    height: 190px;
+
     border-radius: 50%;
-    background: rgba(255,255,255,0.12);
-    right: -50px;
-    top: -70px;
+
+    background: rgba(255, 255, 255, 0.13);
+
+    right: -55px;
+    top: -75px;
 }
 
 .hero-wrapper::after {
     content: "";
+
     position: absolute;
-    width: 120px;
-    height: 120px;
+
+    width: 125px;
+    height: 125px;
+
     border-radius: 50%;
-    background: rgba(255,255,255,0.10);
+
+    background: rgba(255, 255, 255, 0.10);
+
     right: 100px;
-    bottom: -70px;
+    bottom: -75px;
 }
 
 .hero-content {
@@ -199,29 +220,44 @@ section[data-testid="stSidebar"] .stButton > button {
 }
 
 .hero-title {
-    font-size: 2.25rem;
+    font-size: 2.3rem;
     font-weight: 800;
-    color: white !important;
+
+    color: #ffffff !important;
+
     margin: 0;
-    letter-spacing: -0.7px;
+
+    letter-spacing: -0.8px;
 }
 
 .hero-subtitle {
-    color: rgba(255,255,255,0.94) !important;
+    color: rgba(255, 255, 255, 0.95) !important;
+
     font-size: 1rem;
-    margin-top: 7px;
+
+    margin-top: 8px;
+
+    max-width: 700px;
 }
 
 .hero-badge {
     display: inline-block;
-    margin-top: 16px;
-    padding: 7px 13px;
+
+    margin-top: 17px;
+
+    padding: 7px 14px;
+
     border-radius: 999px;
-    background: rgba(255,255,255,0.18);
+
+    background: rgba(255, 255, 255, 0.18);
+
     color: white !important;
+
     font-size: 0.78rem;
-    font-weight: 600;
-    border: 1px solid rgba(255,255,255,0.22);
+
+    font-weight: 700;
+
+    border: 1px solid rgba(255, 255, 255, 0.24);
 }
 
 
@@ -231,22 +267,36 @@ section[data-testid="stSidebar"] .stButton > button {
 
 .stButton > button,
 .stFormSubmitButton > button {
+
     min-height: 44px;
+
     border-radius: 14px;
+
     border: 1.5px solid $border;
-    background: rgba(255,255,255,0.90);
+
+    background: rgba(255, 255, 255, 0.92);
+
     color: $accent;
+
     font-weight: 700;
-    transition: all 0.18s ease;
+
+    transition:
+        all 0.18s ease;
 }
 
 .stButton > button:hover,
 .stFormSubmitButton > button:hover {
+
     background: $accent;
+
     color: white !important;
+
     border-color: $accent;
+
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px $shadow;
+
+    box-shadow:
+        0 8px 20px $shadow;
 }
 
 .stButton > button *,
@@ -256,14 +306,18 @@ section[data-testid="stSidebar"] .stButton > button {
 
 
 /* =====================================================
-   QUICK ACTION BUTTONS
+   QUICK ACTIONS
    ===================================================== */
 
 .quick-action .stButton > button {
+
     min-height: 58px;
+
     border-radius: 17px;
+
     font-size: 0.9rem;
-    background: rgba(255,255,255,0.88);
+
+    background: rgba(255, 255, 255, 0.90);
 }
 
 
@@ -272,67 +326,97 @@ section[data-testid="stSidebar"] .stButton > button {
    ===================================================== */
 
 button[data-baseweb="tab"] {
+
     border-radius: 13px 13px 0 0;
+
     font-weight: 700;
+
     padding: 11px 18px;
 }
 
 button[data-baseweb="tab"][aria-selected="true"] {
+
     color: $accent !important;
 }
 
 div[data-baseweb="tab-highlight"] {
+
     background-color: $accent !important;
+
     height: 3px;
 }
 
 
 /* =====================================================
-   CHAT
+   CHAT MESSAGES
    ===================================================== */
 
 div[data-testid="stChatMessage"] {
-    background: rgba(255,255,255,0.88);
+
+    background: rgba(255, 255, 255, 0.90);
+
     border: 1px solid $border;
+
     border-radius: 20px;
+
     padding: 15px 18px;
+
     margin-bottom: 12px;
-    box-shadow: 0 5px 18px $shadow;
+
+    box-shadow:
+        0 5px 18px $shadow;
 }
 
 div[data-testid="stChatMessage"] p {
+
     line-height: 1.65;
 }
 
 
 /* =====================================================
-   CHAT INPUT - MODERN
+   CHAT INPUT
    ===================================================== */
 
 div[data-testid="stChatInput"] {
+
     position: fixed;
+
     bottom: 22px;
+
     left: 50%;
+
     transform: translateX(-50%);
+
     width: min(900px, 72%);
+
     z-index: 999;
-    background: rgba(255,255,255,0.96);
+
+    background: rgba(255, 255, 255, 0.97);
+
     border: 2px solid $accent2;
-    border-radius: 22px;
+
+    border-radius: 23px;
+
     padding: 5px 8px;
+
     box-shadow:
-        0 10px 35px rgba(0,0,0,0.10),
+        0 12px 38px rgba(0, 0, 0, 0.10),
         0 0 0 5px $shadow;
+
     backdrop-filter: blur(16px);
 }
 
 div[data-testid="stChatInput"] textarea {
+
     background: transparent !important;
+
     color: $text !important;
+
     font-size: 0.98rem;
 }
 
 div[data-testid="stChatInput"] textarea::placeholder {
+
     color: $muted !important;
 }
 
@@ -343,23 +427,30 @@ div[data-testid="stChatInput"] textarea::placeholder {
 
 input,
 textarea {
-    background: rgba(255,255,255,0.92) !important;
+
+    background: rgba(255, 255, 255, 0.94) !important;
+
     color: $text !important;
+
     border-radius: 13px !important;
 }
 
 div[data-baseweb="select"] > div {
+
     border-radius: 13px;
 }
 
 
 /* =====================================================
-   EXPANDERS
+   EXPANDER
    ===================================================== */
 
 div[data-testid="stExpander"] {
-    background: rgba(255,255,255,0.88);
+
+    background: rgba(255, 255, 255, 0.90);
+
     border: 1px solid $border;
+
     border-radius: 15px;
 }
 
@@ -369,105 +460,154 @@ div[data-testid="stExpander"] {
    ===================================================== */
 
 div[data-testid="stAlert"] {
+
     border-radius: 15px;
 }
 
 
 /* =====================================================
-   RADIO / THEME
+   RADIO
    ===================================================== */
 
 div[role="radiogroup"] label {
-    background: rgba(255,255,255,0.75);
+
+    background: rgba(255, 255, 255, 0.78);
+
     border: 1.5px solid $border;
+
     border-radius: 999px;
+
     padding: 5px 14px;
 }
 
 
 /* =====================================================
-   SECTION CARDS
+   SECTION CARD
    ===================================================== */
 
 .section-card {
-    background: rgba(255,255,255,0.82);
+
+    background: rgba(255, 255, 255, 0.84);
+
     border: 1px solid $border;
+
     border-radius: 20px;
+
     padding: 20px;
+
     margin-bottom: 18px;
-    box-shadow: 0 6px 22px $shadow;
+
+    box-shadow:
+        0 6px 22px $shadow;
 }
 
 .section-title {
-    font-size: 1.05rem;
+
+    font-size: 1.08rem;
+
     font-weight: 800;
+
     margin-bottom: 4px;
 }
 
 .section-subtitle {
-    font-size: 0.82rem;
+
+    font-size: 0.83rem;
+
     color: $muted !important;
-    margin-bottom: 15px;
+
+    margin-bottom: 3px;
 }
 
 
 /* =====================================================
-   SCHEDULE SLOTS
+   SCHEDULE
    ===================================================== */
 
 .slot {
+
     display: flex;
+
     gap: 16px;
+
     align-items: center;
-    background: rgba(255,255,255,0.92);
+
+    background: rgba(255, 255, 255, 0.93);
+
     border: 1px solid $border;
+
     border-left: 6px solid $accent;
+
     border-radius: 17px;
+
     padding: 14px 17px;
+
     margin-bottom: 10px;
-    box-shadow: 0 4px 14px $shadow;
-    transition: transform 0.15s ease;
+
+    box-shadow:
+        0 4px 14px $shadow;
+
+    transition:
+        transform 0.15s ease;
 }
 
 .slot:hover {
+
     transform: translateX(3px);
 }
 
 .slot .time {
+
     min-width: 120px;
+
     font-weight: 800;
+
     font-size: 0.82rem;
+
     color: $accent;
 }
 
 .slot .title {
+
     font-weight: 700;
+
     font-size: 0.94rem;
 }
 
 .slot .detail {
+
     font-size: 0.79rem;
+
     color: $muted !important;
+
     margin-top: 3px;
 }
 
 .slot.fixed {
+
     border-left-color: #5b9df0;
+
     background: #eef5ff;
 }
 
 .slot.prayer {
+
     border-left-color: #3fb58a;
+
     background: #ebf9f3;
 }
 
 .slot.meal {
+
     border-left-color: #f4a259;
+
     background: #fff3e6;
 }
 
 .slot.break {
+
     border-left-color: #aaaac7;
+
     background: #f5f5fb;
 }
 
@@ -475,6 +615,7 @@ div[role="radiogroup"] label {
 .slot.prayer .title,
 .slot.meal .title,
 .slot.break .title {
+
     color: #333344;
 }
 
@@ -484,26 +625,39 @@ div[role="radiogroup"] label {
    ===================================================== */
 
 .chip {
+
     display: inline-block;
+
     background: $soft;
+
     border: 1px solid $border;
+
     border-radius: 999px;
+
     padding: 5px 11px;
+
     font-size: 0.78rem;
+
     margin-right: 6px;
+
     color: $text;
 }
 
 
 /* =====================================================
-   TASK CHECKBOXES
+   TASKS
    ===================================================== */
 
 div[data-testid="stCheckbox"] {
-    background: rgba(255,255,255,0.72);
+
+    background: rgba(255, 255, 255, 0.76);
+
     border: 1px solid $border;
+
     border-radius: 14px;
+
     padding: 7px 12px;
+
     margin-bottom: 7px;
 }
 
@@ -513,10 +667,12 @@ div[data-testid="stCheckbox"] {
    ===================================================== */
 
 div[data-testid="stProgress"] > div {
+
     border-radius: 999px;
 }
 
 div[data-testid="stProgress"] div[role="progressbar"] {
+
     background-color: $accent;
 }
 
@@ -528,31 +684,42 @@ div[data-testid="stProgress"] div[role="progressbar"] {
 @media (max-width: 900px) {
 
     .main .block-container {
+
         padding-left: 1rem;
+
         padding-right: 1rem;
     }
 
     .hero-title {
+
         font-size: 1.7rem;
     }
 
     .hero-wrapper {
+
         padding: 23px;
+
         border-radius: 21px;
     }
 
     div[data-testid="stChatInput"] {
+
         width: 90%;
+
         bottom: 12px;
     }
 
     .slot {
+
         flex-direction: column;
+
         align-items: flex-start;
+
         gap: 4px;
     }
 
     .slot .time {
+
         min-width: auto;
     }
 }
@@ -574,13 +741,11 @@ if "theme_choice" not in st.session_state:
 
 
 # =========================================================
-# HELPERS
+# HELPER FUNCTIONS
 # =========================================================
 
 def get_api_key() -> str:
-    """
-    Get Groq API key from session input or environment.
-    """
+
     return (
         st.session_state.get("api_key_input", "")
         or os.getenv("GROQ_API_KEY", "")
@@ -588,26 +753,22 @@ def get_api_key() -> str:
 
 
 def queue_prompt(text: str) -> None:
-    """
-    Store a quick-action prompt.
-    """
+
     st.session_state.pending_prompt = text
 
 
 def toggle_task(task_id: int) -> None:
-    """
-    Update task completion status.
-    """
+
     tools.set_task_done(
         task_id,
-        st.session_state.get(f"task_{task_id}", False),
+        st.session_state.get(
+            f"task_{task_id}",
+            False,
+        ),
     )
 
 
 def run_prompt(text: str) -> None:
-    """
-    Send user message to the planner agent.
-    """
 
     key = get_api_key()
 
@@ -640,7 +801,7 @@ def run_prompt(text: str) -> None:
         try:
 
             with st.spinner(
-                "Your planner agent is thinking and using its tools..."
+                "Your planner agent is thinking..."
             ):
 
                 reply, trace = agent.run_agent(
@@ -688,7 +849,7 @@ def run_prompt(text: str) -> None:
 def slot_html(b: dict) -> str:
 
     btype = (
-        b["type"]
+        b.get("type")
         if b.get("type") in ICONS
         else "task"
     )
@@ -696,9 +857,10 @@ def slot_html(b: dict) -> str:
     detail = ""
 
     if b.get("detail"):
+
         detail = (
             f"<div class='detail'>"
-            f"{html.escape(b['detail'])}"
+            f"{html.escape(str(b['detail']))}"
             f"</div>"
         )
 
@@ -706,26 +868,42 @@ def slot_html(b: dict) -> str:
         f"<div class='slot {btype}'>"
 
         f"<div class='time'>"
-        f"{html.escape(b['start'])} – "
-        f"{html.escape(b['end'])}"
+        f"{html.escape(str(b.get('start', '')))}"
+        f" – "
+        f"{html.escape(str(b.get('end', '')))}"
         f"</div>"
 
         f"<div>"
+
         f"<div class='title'>"
         f"{ICONS[btype]} "
-        f"{html.escape(b['title'])}"
+        f"{html.escape(str(b.get('title', '')))}"
         f"</div>"
 
         f"{detail}"
 
         f"</div>"
+
         f"</div>"
     )
 
 
 # =========================================================
-# APPLY THEME
+# THEME SELECTOR
 # =========================================================
+
+top_left, top_right = st.columns([4, 2])
+
+with top_right:
+
+    st.radio(
+        "Theme",
+        list(THEMES.keys()),
+        key="theme_choice",
+        horizontal=True,
+        label_visibility="collapsed",
+    )
+
 
 theme = THEMES[st.session_state.theme_choice]
 
@@ -736,25 +914,13 @@ st.markdown(
 
 
 # =========================================================
-# TOP HEADER
+# HERO HEADER
 # =========================================================
-
-top_left, top_right = st.columns([4, 2])
-
-with top_right:
-
-    st.radio(
-        "Theme",
-        list(THEMES),
-        key="theme_choice",
-        horizontal=True,
-        label_visibility="collapsed",
-    )
-
 
 st.markdown(
     """
     <div class="hero-wrapper">
+
         <div class="hero-content">
 
             <div class="hero-title">
@@ -771,6 +937,7 @@ st.markdown(
             </div>
 
         </div>
+
     </div>
     """,
     unsafe_allow_html=True,
@@ -848,6 +1015,7 @@ with st.sidebar:
                 )
 
                 if "error" in result:
+
                     st.error(
                         f"{name}: {result['error']}"
                     )
@@ -869,7 +1037,7 @@ with st.sidebar:
 
 
 # =========================================================
-# LOAD CURRENT STATE
+# LOAD APP DATA
 # =========================================================
 
 state = storage.load()
@@ -889,7 +1057,7 @@ tab_chat, tab_plan, tab_tasks = st.tabs(
 
 
 # =========================================================
-# CHAT TAB
+# AI CHAT TAB
 # =========================================================
 
 with tab_chat:
@@ -912,14 +1080,7 @@ with tab_chat:
         unsafe_allow_html=True,
     )
 
-
-    # -----------------------------------------------------
-    # QUICK ACTIONS
-    # -----------------------------------------------------
-
-    st.markdown(
-        "### ⚡ Quick Actions"
-    )
+    st.markdown("### ⚡ Quick Actions")
 
     qa1, qa2, qa3 = st.columns(3)
 
@@ -946,7 +1107,6 @@ with tab_chat:
             unsafe_allow_html=True,
         )
 
-
     with qa2:
 
         st.markdown(
@@ -968,7 +1128,6 @@ with tab_chat:
             "</div>",
             unsafe_allow_html=True,
         )
-
 
     with qa3:
 
@@ -992,54 +1151,48 @@ with tab_chat:
             unsafe_allow_html=True,
         )
 
-
-    # -----------------------------------------------------
-    # CHAT HISTORY
-    # -----------------------------------------------------
-
     if not st.session_state.messages:
 
         st.info(
-            "💡 Try something like: "
+            "💡 Example: "
             "\"I have a 2-hour assignment, "
-            "1-hour gym session, and a 15-minute call. "
+            "a 1-hour gym session, and a 15-minute call. "
             "My class is from 9 AM to 1 PM.\" "
             "Then click **Plan My Day**."
         )
 
+    for message in st.session_state.messages:
 
-    for m in st.session_state.messages:
-
-        with st.chat_message(m["role"]):
+        with st.chat_message(message["role"]):
 
             st.markdown(
-                m["content"]
+                message["content"]
             )
 
-            if m.get("trace"):
+            if message.get("trace"):
 
                 with st.expander(
                     f"🔧 Agent used "
-                    f"{len(m['trace'])} tool call(s)"
+                    f"{len(message['trace'])} tool call(s)"
                 ):
 
-                    for t in m["trace"]:
+                    for tool_call in message["trace"]:
 
                         st.markdown(
-                            f"**{t['name']}** "
-                            f"`{json.dumps(t['args'], ensure_ascii=False)[:300]}`"
+                            f"**{tool_call['name']}** "
+                            f"`{json.dumps(tool_call['args'], ensure_ascii=False)[:300]}`"
                         )
 
                         st.caption(
                             json.dumps(
-                                t["result"],
+                                tool_call["result"],
                                 ensure_ascii=False,
                             )[:400]
                         )
 
 
 # =========================================================
-# SCHEDULE TAB
+# DAILY SCHEDULE TAB
 # =========================================================
 
 with tab_plan:
@@ -1068,7 +1221,7 @@ with tab_plan:
                 </div>
 
                 <div class="section-subtitle">
-                    Date: {html.escape(state["schedule_date"])}
+                    Date: {html.escape(str(state["schedule_date"]))}
                 </div>
 
             </div>
@@ -1078,8 +1231,8 @@ with tab_plan:
 
         st.markdown(
             "".join(
-                slot_html(b)
-                for b in state["schedule"]
+                slot_html(block)
+                for block in state["schedule"]
             ),
             unsafe_allow_html=True,
         )
@@ -1093,12 +1246,11 @@ with tab_tasks:
 
     done = sum(
         1
-        for t in state["tasks"]
-        if t["done"]
+        for task in state["tasks"]
+        if task["done"]
     )
 
     total = len(state["tasks"])
-
 
     st.markdown(
         """
@@ -1109,18 +1261,13 @@ with tab_tasks:
             </div>
 
             <div class="section-subtitle">
-                Track your tasks and monitor your progress.
+                Track your tasks and monitor your daily progress.
             </div>
 
         </div>
         """,
         unsafe_allow_html=True,
     )
-
-
-    # -----------------------------------------------------
-    # PROGRESS
-    # -----------------------------------------------------
 
     if total:
 
@@ -1136,17 +1283,9 @@ with tab_tasks:
             "what you need to accomplish."
         )
 
+    st.markdown("### 📌 My Tasks")
 
-    st.markdown(
-        "### 📌 My Tasks"
-    )
-
-
-    # -----------------------------------------------------
-    # TASK LIST
-    # -----------------------------------------------------
-
-    for t in sorted(
+    for task in sorted(
         state["tasks"],
         key=lambda x: (
             x["done"],
@@ -1156,24 +1295,17 @@ with tab_tasks:
 
         st.checkbox(
             (
-                f"{PRIORITY_ICON[t['priority']]} "
-                f"{t['title']} "
-                f"({t['estimated_minutes']} min)"
+                f"{PRIORITY_ICON[task['priority']]} "
+                f"{task['title']} "
+                f"({task['estimated_minutes']} min)"
             ),
-            value=t["done"],
-            key=f"task_{t['id']}",
+            value=task["done"],
+            key=f"task_{task['id']}",
             on_change=toggle_task,
-            args=(t["id"],),
+            args=(task["id"],),
         )
 
-
-    # -----------------------------------------------------
-    # COMMITMENTS
-    # -----------------------------------------------------
-
-    st.markdown(
-        "### 🏫 Fixed Commitments"
-    )
+    st.markdown("### 🏫 Fixed Commitments")
 
     if not state["commitments"]:
 
@@ -1183,7 +1315,7 @@ with tab_tasks:
 
     else:
 
-        for c in sorted(
+        for commitment in sorted(
             state["commitments"],
             key=lambda x: x["start"],
         ):
@@ -1191,15 +1323,17 @@ with tab_tasks:
             st.markdown(
                 f"""
                 <div style="margin-bottom:10px;">
+
                     <span class="chip">
-                        {html.escape(c["start"])}
+                        {html.escape(str(commitment["start"]))}
                         –
-                        {html.escape(c["end"])}
+                        {html.escape(str(commitment["end"]))}
                     </span>
 
                     <strong>
-                        {html.escape(c["title"])}
+                        {html.escape(str(commitment["title"]))}
                     </strong>
+
                 </div>
                 """,
                 unsafe_allow_html=True,
@@ -1219,7 +1353,6 @@ pending = st.session_state.pop(
     None,
 )
 
-
 if user_text or pending:
 
     run_prompt(
@@ -1228,4 +1361,5 @@ if user_text or pending:
 
     st.rerun()
 ```
+
 
