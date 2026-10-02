@@ -2,8 +2,7 @@ import html
 import os
 
 import streamlit as st
-from dotenv import load_dotenv
-from groq import AuthenticationError, Groq, RateLimitError
+from groq import Groq
 
 import agent
 import storage
@@ -11,16 +10,14 @@ import tools
 
 # =========================================================
 
-# CONFIG
+# PAGE
 
 # =========================================================
-
-load_dotenv()
 
 st.set_page_config(
 page_title="Daily Planner Agent",
 page_icon="📅",
-layout="wide",
+layout="wide"
 )
 
 # =========================================================
@@ -39,122 +36,106 @@ st.session_state.setdefault("pending_prompt", None)
 # =========================================================
 
 def get_api_key():
-try:
-return st.secrets["GROQ_API_KEY"]
-except Exception:
-return os.environ.get("GROQ_API_KEY")
-
-# =========================================================
-
-# LANGUAGE DETECTION
-
-# =========================================================
-
-def detect_language_request(text):
-text = text.lower()
+key = os.environ.get("GROQ_API_KEY")
 
 ```
-roman_urdu = [
-    "roman urdu mein",
-    "roman urdu me",
-    "roman urdu main",
-    "roman urdu may",
-    "in roman urdu",
-    "answer in roman urdu",
-    "reply in roman urdu",
-    "explain in roman urdu",
-]
+if key:
+    return key
 
-urdu = [
-    "urdu mein",
-    "urdu me",
-    "urdu main",
-    "urdu may",
-    "in urdu",
-    "answer in urdu",
-    "reply in urdu",
-    "explain in urdu",
-]
+try:
+    return st.secrets["GROQ_API_KEY"]
+except Exception:
+    return None
+```
 
-english = [
-    "english mein",
-    "english me",
-    "english main",
-    "english may",
-    "in english",
-    "answer in english",
-    "reply in english",
-    "explain in english",
-]
+# =========================================================
 
-if any(x in text for x in roman_urdu):
+# LANGUAGE
+
+# =========================================================
+
+def detect_language(text):
+
+```
+text = text.lower()
+
+if (
+    "roman urdu" in text
+    or "roman urdu mein" in text
+    or "roman urdu me" in text
+    or "roman urdu main" in text
+    or "in roman urdu" in text
+):
     return "Roman Urdu"
 
-if any(x in text for x in urdu):
-    return "Urdu"
-
-if any(x in text for x in english):
+if (
+    "english mein" in text
+    or "english me" in text
+    or "english main" in text
+    or "english may" in text
+    or "in english" in text
+):
     return "English"
+
+if (
+    "urdu mein" in text
+    or "urdu me" in text
+    or "urdu main" in text
+    or "urdu may" in text
+    or "in urdu" in text
+):
+    return "Urdu"
 
 return None
 ```
 
 def language_instruction(text):
-language = detect_language_request(text)
 
 ```
+language = detect_language(text)
+
 if language == "English":
-    return """
-```
+    return (
+        "IMPORTANT: The user explicitly requested English. "
+        "Answer completely in English. "
+        "Do not use Roman Urdu or Urdu script."
+    )
 
-The user explicitly requested English.
-Answer completely in English.
-Do not use Roman Urdu or Urdu script.
-"""
-
-```
 if language == "Roman Urdu":
-    return """
-```
+    return (
+        "IMPORTANT: The user explicitly requested Roman Urdu. "
+        "Answer completely in Roman Urdu using Latin letters. "
+        "Do not use Urdu script."
+    )
 
-The user explicitly requested Roman Urdu.
-Answer completely in Roman Urdu using Latin/English letters.
-Do not use Urdu script.
-"""
-
-```
 if language == "Urdu":
-    return """
-```
+    return (
+        "IMPORTANT: The user explicitly requested Urdu. "
+        "Answer completely in Urdu script. "
+        "Do not use Roman Urdu."
+    )
 
-The user explicitly requested Urdu.
-Answer completely in Urdu script.
-Do not use Roman Urdu.
-"""
-
+return (
+    "IMPORTANT: No language was explicitly requested. "
+    "Follow the language used by the user. "
+    "English input means English response. "
+    "Roman Urdu input means Roman Urdu response. "
+    "Urdu-script input means Urdu-script response."
+)
 ```
-return """
-```
-
-No language was explicitly requested.
-Follow the user's current language.
-English user message -> English answer.
-Roman Urdu user message -> Roman Urdu answer.
-Urdu-script user message -> Urdu-script answer.
-"""
 
 # =========================================================
 
-# PROMPT FUNCTIONS
+# CHAT
 
 # =========================================================
-
-def queue_prompt(text):
-st.session_state.pending_prompt = text
 
 def run_prompt(text):
 
 ```
+if not text:
+    return
+
 text = text.strip()
 
 if not text:
@@ -163,96 +144,65 @@ if not text:
 st.session_state.messages.append(
     {
         "role": "user",
-        "content": text,
+        "content": text
     }
 )
 
-api_key = get_api_key()
+key = get_api_key()
 
-if not api_key:
-
+if not key:
     st.session_state.messages.append(
         {
             "role": "assistant",
             "content": (
-                "Please add GROQ_API_KEY to Streamlit Secrets."
-            ),
+                "Please add GROQ_API_KEY to "
+                "Streamlit Secrets."
+            )
+        }
+    )
+    return
+
+history = []
+
+for message in st.session_state.messages[:-1]:
+    history.append(
+        {
+            "role": message["role"],
+            "content": message["content"]
         }
     )
 
-    return
+prompt = (
+    text
+    + "\n\n"
+    + language_instruction(text)
+)
 
 try:
 
-    history = []
-
-    for message in st.session_state.messages[:-1]:
-
-        history.append(
-            {
-                "role": message["role"],
-                "content": message["content"],
-            }
-        )
-
-    prompt = (
-        text
-        + "\n\n"
-        + language_instruction(text)
-    )
-
     client = Groq(
-        api_key=api_key
+        api_key=key
     )
 
-    response = agent.run_agent(
+    answer = agent.run_agent(
         client,
         history,
-        prompt,
+        prompt
     )
 
-    if isinstance(response, dict):
-
-        answer = response.get(
+    if isinstance(answer, dict):
+        answer = answer.get(
             "answer",
-            response.get(
+            answer.get(
                 "response",
-                "I could not generate a response.",
-            ),
+                "I could not generate a response."
+            )
         )
 
-    else:
-
-        answer = str(response)
-
     st.session_state.messages.append(
         {
             "role": "assistant",
-            "content": answer,
-        }
-    )
-
-except AuthenticationError:
-
-    st.session_state.messages.append(
-        {
-            "role": "assistant",
-            "content": (
-                "The Groq API key was rejected. "
-                "Please check GROQ_API_KEY in Streamlit Secrets."
-            ),
-        }
-    )
-
-except RateLimitError:
-
-    st.session_state.messages.append(
-        {
-            "role": "assistant",
-            "content": (
-                "The Groq API rate limit was reached. "
-                "Please wait and try again."
-            ),
+            "content": str(answer)
         }
     )
 
@@ -264,14 +214,14 @@ except Exception as error:
             "content": (
                 "I could not generate a response right now."
             ),
-            "trace": str(error),
+            "trace": str(error)
         }
     )
 ```
 
 # =========================================================
 
-# TASK FUNCTION
+# TASK
 
 # =========================================================
 
@@ -279,13 +229,13 @@ def toggle_task(task_id):
 
 ```
 value = st.session_state.get(
-    f"task_{task_id}",
-    False,
+    "task_" + str(task_id),
+    False
 )
 
 tools.set_task_done(
     task_id,
-    value,
+    value
 )
 ```
 
@@ -295,7 +245,7 @@ tools.set_task_done(
 
 # =========================================================
 
-def schedule_card(slot):
+def make_schedule_card(slot):
 
 ```
 slot_type = str(
@@ -310,19 +260,19 @@ icons = {
     "meal": "🍽️",
     "sleep": "🌙",
     "exercise": "🏃",
-    "task": "📝",
+    "task": "📝"
 }
 
 icon = icons.get(
     slot_type,
-    "📌",
+    "📌"
 )
 
 title = html.escape(
     str(
         slot.get(
             "title",
-            "Untitled",
+            "Untitled"
         )
     )
 )
@@ -331,7 +281,7 @@ time = html.escape(
     str(
         slot.get(
             "time",
-            "",
+            ""
         )
     )
 )
@@ -340,7 +290,7 @@ detail = html.escape(
     str(
         slot.get(
             "detail",
-            "",
+            ""
         )
     )
 )
@@ -352,7 +302,7 @@ return f"""
         {icon}
     </div>
 
-    <div class="schedule-content">
+    <div>
 
         <div class="schedule-time">
             {time}
@@ -378,7 +328,8 @@ return f"""
 
 # =========================================================
 
-css = """
+st.markdown(
+"""
 
 <style>
 
@@ -446,7 +397,7 @@ footer {
 
 .hero-title {
     margin: 0;
-    font-size: clamp(38px, 5vw, 60px);
+    font-size: clamp(38px,5vw,60px);
     line-height: 1.05;
     font-weight: 850;
     letter-spacing: -2px;
@@ -480,13 +431,6 @@ footer {
     border-radius: 18px;
     background: rgba(255,255,255,0.82);
     border: 1px solid rgba(190,120,220,0.22);
-    transition: 0.2s ease;
-}
-
-.schedule-card:hover {
-    transform: translateY(-2px);
-    box-shadow:
-        0 10px 25px rgba(124,58,237,0.10);
 }
 
 .schedule-icon {
@@ -534,7 +478,7 @@ div[data-testid="stChatInput"] {
     bottom: 24px;
     left: 50%;
     transform: translateX(-50%);
-    width: min(850px, calc(100vw - 40px));
+    width: min(850px,calc(100vw - 40px));
     z-index: 999;
 }
 
@@ -559,22 +503,12 @@ div[data-testid="stChatInput"] > div {
 .stButton > button:hover {
     border-color: #b83fd4 !important;
     transform: translateY(-1px);
-    box-shadow:
-        0 8px 20px rgba(184,63,212,0.12);
 }
 
 
-/* METRICS */
+/* MOBILE */
 
-[data-testid="stMetric"] {
-    background: rgba(255,255,255,0.75);
-    border: 1px solid rgba(190,120,220,0.22);
-    padding: 15px;
-    border-radius: 18px;
-}
-
-
-@media (max-width: 768px) {
+@media (max-width:768px) {
 
     .block-container {
         padding-left: 1rem;
@@ -583,7 +517,6 @@ div[data-testid="stChatInput"] > div {
 
     .hero {
         padding: 28px 24px;
-        border-radius: 24px;
     }
 
     .hero-title {
@@ -594,15 +527,13 @@ div[data-testid="stChatInput"] > div {
         width: calc(100vw - 24px);
         bottom: 12px;
     }
+
 }
 
 </style>
 
-"""
-
-st.markdown(
-css,
-unsafe_allow_html=True,
+""",
+unsafe_allow_html=True
 )
 
 # =========================================================
@@ -612,27 +543,28 @@ unsafe_allow_html=True,
 # =========================================================
 
 st.markdown(
-""" <div class="hero">
+"""
+
+<div class="hero">
 
 ```
-    <div class="hero-badge">
-        ✨ AI-powered personal planning
-    </div>
+<div class="hero-badge">
+    ✨ AI-powered personal planning
+</div>
 
-    <h1 class="hero-title">
-        Daily Planner Agent
-    </h1>
+<h1 class="hero-title">
+    Daily Planner Agent
+</h1>
 
-    <div class="hero-subtitle">
-        Plan your day, organize tasks, manage your schedule,
-        and get personalized daily guidance with your AI planner.
-    </div>
+<div class="hero-subtitle">
+    Plan your day, organize tasks, manage your schedule,
+    and get personalized daily guidance with your AI planner.
+</div>
+```
 
 </div>
 """,
-unsafe_allow_html=True,
-```
-
+    unsafe_allow_html=True
 )
 
 # =========================================================
@@ -656,7 +588,7 @@ state = storage.load()
 
 prayer_times = state.get(
     "prayer_times",
-    {},
+    {}
 )
 
 st.markdown("### 🕌 Prayer Times")
@@ -667,72 +599,72 @@ with st.form("prayer_form"):
         "Fajr",
         value=prayer_times.get(
             "Fajr",
-            "",
-        ),
+            ""
+        )
     )
 
     dhuhr = st.text_input(
         "Dhuhr",
         value=prayer_times.get(
             "Dhuhr",
-            "",
-        ),
+            ""
+        )
     )
 
     asr = st.text_input(
         "Asr",
         value=prayer_times.get(
             "Asr",
-            "",
-        ),
+            ""
+        )
     )
 
     maghrib = st.text_input(
         "Maghrib",
         value=prayer_times.get(
             "Maghrib",
-            "",
-        ),
+            ""
+        )
     )
 
     isha = st.text_input(
         "Isha",
         value=prayer_times.get(
             "Isha",
-            "",
-        ),
+            ""
+        )
     )
 
     save = st.form_submit_button(
         "Save Prayer Times",
-        use_container_width=True,
+        use_container_width=True
     )
 
     if save:
 
         storage.set_prayer_time(
             "Fajr",
-            fajr,
+            fajr
         )
 
         storage.set_prayer_time(
             "Dhuhr",
-            dhuhr,
+            dhuhr
         )
 
         storage.set_prayer_time(
             "Asr",
-            asr,
+            asr
         )
 
         storage.set_prayer_time(
             "Maghrib",
-            maghrib,
+            maghrib
         )
 
         storage.set_prayer_time(
             "Isha",
-            isha,
+            isha
         )
 
         st.success(
@@ -745,7 +677,7 @@ st.divider()
 
 if st.button(
     "Reset Planner Data",
-    use_container_width=True,
+    use_container_width=True
 ):
 
     storage.reset()
@@ -794,7 +726,7 @@ fixed_commitments = state.get(
 
 schedule_note = state.get(
 "schedule_note",
-"",
+""
 )
 
 # =========================================================
@@ -807,13 +739,13 @@ chat_tab, schedule_tab, tasks_tab = st.tabs(
 [
 "💬 Chat",
 "📅 Schedule",
-"✅ Tasks",
+"✅ Tasks"
 ]
 )
 
 # =========================================================
 
-# CHAT
+# CHAT TAB
 
 # =========================================================
 
@@ -835,7 +767,7 @@ with col1:
 
     if st.button(
         "📋 Plan My Day",
-        use_container_width=True,
+        use_container_width=True
     ):
 
         queue_prompt(
@@ -849,7 +781,7 @@ with col2:
 
     if st.button(
         "🔄 Adjust My Plan",
-        use_container_width=True,
+        use_container_width=True
     ):
 
         queue_prompt(
@@ -863,7 +795,7 @@ with col3:
 
     if st.button(
         "📊 Day Summary",
-        use_container_width=True,
+        use_container_width=True
     ):
 
         queue_prompt(
@@ -886,7 +818,7 @@ for message in st.session_state.messages:
 
     with st.chat_message(
         message["role"],
-        avatar=avatar,
+        avatar=avatar
     ):
 
         st.markdown(
@@ -906,7 +838,7 @@ for message in st.session_state.messages:
 
 # =========================================================
 
-# SCHEDULE
+# SCHEDULE TAB
 
 # =========================================================
 
@@ -918,6 +850,7 @@ st.markdown(
 )
 
 if schedule_note:
+
     st.info(
         schedule_note
     )
@@ -927,41 +860,44 @@ if schedule:
     for slot in schedule:
 
         st.markdown(
-            schedule_card(slot),
-            unsafe_allow_html=True,
+            make_schedule_card(slot),
+            unsafe_allow_html=True
         )
 
 else:
 
     st.markdown(
         """
-        <div class="schedule-card">
-
-            <div class="schedule-icon">
-                🌸
-            </div>
-
-            <div class="schedule-content">
-
-                <div class="schedule-title">
-                    No schedule yet
-                </div>
-
-                <div class="schedule-detail">
-                    Ask the Daily Planner Agent to plan your day.
-                </div>
-
-            </div>
-
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
 ```
+
+<div class="schedule-card">
+
+```
+<div class="schedule-icon">
+    🌸
+</div>
+
+<div>
+
+    <div class="schedule-title">
+        No schedule yet
+    </div>
+
+    <div class="schedule-detail">
+        Ask the Daily Planner Agent to plan your day.
+    </div>
+
+</div>
+```
+
+</div>
+""",
+            unsafe_allow_html=True
+        )
 
 # =========================================================
 
-# TASKS
+# TASKS TAB
 
 # =========================================================
 
@@ -977,7 +913,7 @@ completed = sum(
     for task in tasks
     if task.get(
         "done",
-        False,
+        False
     )
 )
 
@@ -985,27 +921,30 @@ total = len(tasks)
 
 remaining = max(
     total - completed,
-    0,
+    0
 )
 
 col1, col2, col3 = st.columns(3)
 
 with col1:
+
     st.metric(
         "Total Tasks",
-        total,
+        total
     )
 
 with col2:
+
     st.metric(
         "Completed",
-        completed,
+        completed
     )
 
 with col3:
+
     st.metric(
         "Remaining",
-        remaining,
+        remaining
     )
 
 if total:
@@ -1023,15 +962,15 @@ if tasks:
         key=lambda task: (
             task.get(
                 "done",
-                False,
+                False
             ),
             -int(
                 task.get(
                     "priority",
-                    0,
+                    0
                 )
-            ),
-        ),
+            )
+        )
     )
 
     for index, task in enumerate(
@@ -1040,23 +979,23 @@ if tasks:
 
         task_id = task.get(
             "id",
-            f"task_{index}",
+            f"task_{index}"
         )
 
         title = task.get(
             "title",
-            "Untitled task",
+            "Untitled task"
         )
 
         checked = task.get(
             "done",
-            False,
+            False
         )
 
         new_value = st.checkbox(
             title,
             value=checked,
-            key=f"task_{task_id}",
+            key=f"task_{task_id}"
         )
 
         if new_value != checked:
@@ -1071,63 +1010,32 @@ else:
 
     st.markdown(
         """
-        <div class="schedule-card">
-
-            <div class="schedule-icon">
-                🌷
-            </div>
-
-            <div class="schedule-content">
-
-                <div class="schedule-title">
-                    No tasks yet
-                </div>
-
-                <div class="schedule-detail">
-                    Ask the Daily Planner Agent to create your plan.
-                </div>
-
-            </div>
-
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-if fixed_commitments:
-
-    st.markdown(
-        "### 📌 Fixed Commitments"
-    )
-
-    for commitment in fixed_commitments:
-
-        if isinstance(
-            commitment,
-            dict,
-        ):
-
-            title = commitment.get(
-                "title",
-                "Commitment",
-            )
-
-            time = commitment.get(
-                "time",
-                "",
-            )
-
-            st.markdown(
-                f"**{html.escape(str(title))}** — "
-                f"{html.escape(str(time))}"
-            )
-
-        else:
-
-            st.markdown(
-                f"• {html.escape(str(commitment))}"
-            )
 ```
+
+<div class="schedule-card">
+
+```
+<div class="schedule-icon">
+    🌷
+</div>
+
+<div>
+
+    <div class="schedule-title">
+        No tasks yet
+    </div>
+
+    <div class="schedule-detail">
+        Ask the Daily Planner Agent to create your plan.
+    </div>
+
+</div>
+```
+
+</div>
+""",
+            unsafe_allow_html=True
+        )
 
 # =========================================================
 
@@ -1154,8 +1062,11 @@ st.rerun()
 if user_prompt:
 
 ```
-run_prompt(user_prompt)
+run_prompt(
+    user_prompt
+)
 
 st.rerun()
 ```
+
 
